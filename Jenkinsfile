@@ -31,7 +31,6 @@ pipeline {
                     echo "Building version ${appVersion}"
                 }
             }
-
         }
         stage('Install Dependencies') {
             steps {
@@ -46,7 +45,7 @@ pipeline {
             steps {
                 script{
                     sh """
-                        docker build -t catalogue:${appVersion}   
+                        docker build -t catalogue:${appVersion} .  
                     """
                 }
             }    
