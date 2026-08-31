@@ -49,16 +49,18 @@ pipeline {
             steps {
                 script{
                      withAWS(credentials: 'aws-credentials-id', region: "${region}") {
-                    // commands here have  AWS authentication
-                    sh """
-                       aws ecr get-login-password --${region} | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
-                       docker build -t ${ACC_ID}.dkr.ecr.${region}.amazonaws.com/roboshop/catalogue:${appVersion} .
-                       docker push ${ACC_ID}.dkr.ecr.${region}.amazonaws.com/roboshop/catalogue:${appVersion} 
-                    """
+                      // commands here have  AWS authentication
+                        sh """
+                        aws ecr get-login-password --${region} | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
+                        docker build -t ${ACC_ID}.dkr.ecr.${region}.amazonaws.com/roboshop/catalogue:${appVersion} .
+                        docker push ${ACC_ID}.dkr.ecr.${region}.amazonaws.com/roboshop/catalogue:${appVersion} 
+                        """
+                    }
                 }
             }    
         }
     }
+    
     // post build
     post {
         always {
@@ -70,6 +72,5 @@ pipeline {
         failure {
             echo "pipeline failure" 
         }
-    }
-    
+    } 
 }
