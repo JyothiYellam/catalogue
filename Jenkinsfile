@@ -26,7 +26,9 @@ pipeline {
         stage('Read version'){
             steps {
                 script {
+                    def packageJson = readJSON file: 'package.json'
                     // Access fields direclty
+
                     appVersion = packageJson.version     
                     echo "Building version ${appVersion}"
                 }
