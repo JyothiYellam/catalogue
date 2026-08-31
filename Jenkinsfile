@@ -22,44 +22,36 @@ pipeline {
 
         password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
     } */
-    stages{
-        stage('Read version') {
+    stages {
+        stage('Read version'){
             steps {
                 script {
-                    // Read the file and parse it into an object
-                    def packageJson = readJSON file: 'package.json'
-                            
-                    // Access individual properties directly 
-                     appVersion = packageJson.version
-                            
+                    // Access fields direclty
+                    appVersion = packageJson.version     
                     echo "Building version ${appVersion}"
                 }
-             }
+            }
 
         }
 
     }   
-
-    stages {
-        stage('Install Dependencies') {
-            steps {
-                script{
-                    sh """ 
-                        npm install
-                    """
-                }
+    stage('Install Dependencies') {
+        steps {
+            script{
+                sh """ 
+                    npm install
+                """
             }
         }
-        stage('Build Image') {
-            steps {
-                script{
-                    sh """
-                        docker build -t catalogue:${appVersion}   
-                    """
-                }
+    }
+    stage('Build Image') {
+        steps {
+            script{
+                sh """
+                    docker build -t catalogue:${appVersion}   
+                """
             }
-        }
-    
+        }    
     }
 
     post {
