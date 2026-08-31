@@ -32,7 +32,7 @@ pipeline {
                     // Access individual properties directly 
                      appVersion = packageJson.version
                             
-                    echo "Building ${appName} version ${appVersion}"
+                    echo "Building version ${appVersion}"
                 }
              }
 
