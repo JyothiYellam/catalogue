@@ -45,7 +45,7 @@ pipeline {
                 }
             }
         }
-        stage('Install Dependencies'){
+        stage('SonarQube Analysis'){
             steps {
                script {
                     def scannerHome = tool name: 'sonar-8'   // agent configuration
