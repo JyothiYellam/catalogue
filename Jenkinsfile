@@ -48,7 +48,7 @@ pipeline {
         stage('SonarQube Analysis'){
             steps {
                script {
-                    def scannerHome = tool name: 'sonar-8'   // agent configuration
+                    def scannerHome = tool name: 'sonar-8.0'   // agent configuration
                     withSonarQubeEnv('sonar-server') {  // analysing and uplodaing to server
                         sh "${scannerHome}/bin/sonar-scanner"
                     }
