@@ -46,14 +46,15 @@ pipeline {
             }
         }
         stage('Install Dependencies'){
-            tools {
-                sonar 'sonar-8'
-            }
             steps {
-                script {
-                    sh "sonar-scanner"
+               script {
+                    def scannerHome = tool name: 'sonar-8'   // agent configuration
+                    withSonarQubeEnv('sonar-server') {  // analysing and uplodaing to server
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
                 }
             }
+
         }
         stage('Build Image') {
             steps {
