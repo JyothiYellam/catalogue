@@ -49,7 +49,7 @@ pipeline {
             steps {
                script {
                     def scannerHome = tool name: 'sonar-8.0'   // agent configuration
-                    withSonarQubeEnv('sonar-server') {  // analysing and uplodaing to server
+                    withSonarQubeEnv('sonar-8.0') {  // analysing and uplodaing to server
                         sh "${scannerHome}/bin/sonar-scanner"
                     }
                 }
