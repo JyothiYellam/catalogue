@@ -45,6 +45,16 @@ pipeline {
                 }
             }
         }
+        stage('Install Dependencies'){
+            tools {
+                sonar 'sonar-8'
+            }
+            steps {
+                script {
+                    sh "sonar-scanner"
+                }
+            }
+        }
         stage('Build Image') {
             steps {
                 script{
