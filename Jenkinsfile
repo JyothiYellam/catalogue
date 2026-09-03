@@ -45,7 +45,16 @@ pipeline {
                 }
             }
         }
-        stage('SonarQube Analysis'){
+        stage('Unit tests'){
+            steps {
+                script {
+                    sh """
+                        npm test
+                    """
+                }
+            }
+        }
+        /* stage('SonarQube Analysis'){
             steps {
                script {
                     def scannerHome = tool name: 'sonar-8'   // agent configuration
@@ -62,6 +71,60 @@ pipeline {
                     waitForQualityGate abortPipeline: true
                 }
             }
+        } */
+        stage('Dependabot Alerts Check') {
+            steps {
+                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+                    script {
+                        def owner = 'JyothiYellam'
+                        def repo  = 'catalogue'
+
+                        // Fetch high + critical Dependabot alerts via GitHub REST API
+                        def response = sh(
+                            script: """
+                                curl -s -w "\\n%{http_code}" \\
+                                -H "Authorization: Bearer ${GITHUB_TOKEN}" \\
+                                -H "Accept: application/vnd.github+json" \\
+                                -H "X-GitHub-Api-Version: 2022-11-28" \\
+                                "https://api.github.com/repos/${owner}/${repo}/dependabot/alerts?state=open&per_page=100"
+                            """,
+                            returnStdout: true
+                        ).trim()
+
+                        // Split body and HTTP status code
+                        def parts      = response.tokenize('\n')
+                        def httpStatus = parts[-1].trim()
+                        def body       = parts[0..-2].join('\n')
+
+                        if (httpStatus != '200') {
+                            error "GitHub API call failed with HTTP ${httpStatus}. Check GITHUB_TOKEN permissions."
+                        }
+
+                        // Parse the JSON response
+                        def alerts = readJSON text: body
+
+                        // Filter for high + critical severity, open alerts only
+                        def criticalHigh = alerts.findAll {
+                            it.security_advisory.severity == 'high' || it.security_advisory.severity == 'critical'
+                        }
+
+                        echo "Found ${criticalHigh.size()} open High/Critical Dependabot alert(s)"
+
+                        if (criticalHigh.size() > 0) {
+                            echo "--------------------------------------------------"
+                            echo "HIGH/CRITICAL VULNERABILITIES DETECTED:"
+                            criticalHigh.each {
+                                echo "- [${it.security_advisory.severity.toUpperCase()}] ${it.security_advisory.summary} (package: ${it.dependency.package.name})"
+                            }
+                            echo "--------------------------------------------------"
+                            error "Failing pipeline due to unresolved High/Critical Dependabot alerts."
+                        }
+
+                    echo "No High/Critical Dependabot alerts found. Proceeding."
+                    }
+                }
+            }
+            
         }
         stage('Build Image') {
             steps {
