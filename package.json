@@ -4,7 +4,7 @@
   "description": "product catalogue REST API",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "SteveW",
   "license": "Apache-2.0",
@@ -12,10 +12,14 @@
     "@instana/collector": "^6.6.1",
     "body-parser": "^2.3.0",
     "express": "^5.2.1",
-    "express-pino-logger": "^4.0.0",
     "mongodb": "^4.7.0",
     "pino": "^5.10.8",
+    "express-pino-logger": "^4.0.0",
     "pino-pretty": "^2.5.0",
     "qs": "^6.16.0"
+  },
+  "devDependencies": {
+    "jest": "^30.0.0",
+    "supertest": "^7.1.4"
   }
 }
